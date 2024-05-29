@@ -33,51 +33,53 @@ async def real_time_register(name: str = Form(...)):
     cap = cv2.VideoCapture(1)
     if not cap.isOpened():
         return JSONResponse(content={"error": "Could not open webcam"}, status_code=500)
-    
-    while True:
-        ret, frame = cap.read()
-        if not ret:
-            return JSONResponse(content={"error": "Failed to capture image"}, status_code=500)
+    try:
+        while True:
+            ret, frame = cap.read()
+            if not ret:
+                return JSONResponse(content={"error": "Failed to capture image"}, status_code=500)
 
-        cv2.imshow("Register - press 'q' to capture", frame)
-        if cv2.waitKey(1) & 0xFF == ord('q'):
-            embedding = DeepFace.represent(
-                img_path = frame,
-                model_name="Facenet512"
-            )[0]['embedding']
-            embedding_path = os.path.join("embeddings", f"{name}.pkl")
-            with open(embedding_path, 'wb') as file:
-                pickle.dump(embedding, file)
-            break
-    
-    # Release the webcam
-    cap.release()
-    # Close the image show frame
-    cv2.destroyAllWindows()
-    # need to have waitkey again after destroying all windows
-    cv2.waitKey(1)
-    return JSONResponse(content={"message": "Reference image added successfully", "filename": f"{name}.jpg"})
+            cv2.imshow("Register - press 'q' to capture", frame)
+            if cv2.waitKey(1) & 0xFF == ord('q'):
+                embedding = DeepFace.represent(
+                    img_path = frame,
+                    model_name="Facenet512"
+                )[0]['embedding']
+                embedding_path = os.path.join("embeddings", f"{name}.pkl")
+                with open(embedding_path, 'wb') as file:
+                    pickle.dump(embedding, file)
+                break
+    finally:
+        # Release the webcam
+        cap.release()
+        # Close the image show frame
+        cv2.destroyAllWindows()
+        # need to have waitkey again after destroying all windows
+        cv2.waitKey(1)
+
+    return JSONResponse(content={"message": "Reference data added successfully", "filename": f"{name}.pkl"})
 
 @app.post("/real_time_verify/")
 async def real_time_verify():
     cap = cv2.VideoCapture(1)
     if not cap.isOpened():
         return JSONResponse(content={"error": "Could not open webcam"}, status_code=500)
-    
-    while True:
-        ret, frame = cap.read()
-        if not ret:
-            return JSONResponse(content={"error": "Failed to capture image"}, status_code=500)
+    try:
+        while True:
+            ret, frame = cap.read()
+            if not ret:
+                return JSONResponse(content={"error": "Failed to capture image"}, status_code=500)
 
-        cv2.imshow("Verify - Press 'q' to capture", frame)
-        if cv2.waitKey(1) & 0xFF == ord('q'):
-            break
-    # Release the webcam
-    cap.release()
-    # Close the image show frame
-    cv2.destroyAllWindows()
-    # need to have waitkey again after destroying all windows
-    cv2.waitKey(1)
+            cv2.imshow("Verify - Press 'q' to capture", frame)
+            if cv2.waitKey(1) & 0xFF == ord('q'):
+                break
+    finally:
+        # Release the webcam
+        cap.release()
+        # Close the image show frame
+        cv2.destroyAllWindows()
+        # need to have waitkey again after destroying all windows
+        cv2.waitKey(1)
     
     # Compute embedding of the captured image using the default DeepFace model (VGG-Face)
     try:
@@ -105,6 +107,3 @@ async def real_time_verify():
         return {"message": f"{best_match} verified successfully", "distance": best_distance, "threshold": threshold}
     else:
         return {"message": "Verification failed, no such person"}
-
-    
-    
