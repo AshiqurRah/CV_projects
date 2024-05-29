@@ -47,11 +47,6 @@ async def real_time_register(name: str = Form(...)):
             embedding_path = os.path.join("embeddings", f"{name}.pkl")
             with open(embedding_path, 'wb') as file:
                 pickle.dump(embedding, file)
-            objs = DeepFace.analyze(
-                img_path = frame, 
-                actions = ['age', 'gender', 'race', 'emotion'],
-            )
-            print(objs)
             break
     
     # Release the webcam
