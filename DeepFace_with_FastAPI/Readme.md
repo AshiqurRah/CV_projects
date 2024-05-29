@@ -7,7 +7,6 @@ Face detection and recognition using DeepFace framework and FastAPI. Stores data
 
 - [Installation](#installation)
 - [Usage](#usage)
-- [License](#license)
 
 
 ## Installation
