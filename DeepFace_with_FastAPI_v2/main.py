@@ -75,8 +75,6 @@ async def real_time_verify():
 
         cv2.imshow("Verify - Press 'q' to capture", frame)
         if cv2.waitKey(1) & 0xFF == ord('q'):
-            temp_image_path = "temp/temp_frame.jpg"
-            cv2.imwrite(temp_image_path, frame)
             break
     # Release the webcam
     cap.release()
@@ -94,9 +92,6 @@ async def real_time_verify():
     # Load all stored embeddings and compare
     best_match = False
 
-    # remove temp image file
-    os.remove(temp_image_path)
-
     for filename in os.listdir("embeddings"):
         if filename.endswith(".pkl"):
             with open(os.path.join("embeddings", filename), 'rb') as file:
@@ -111,7 +106,7 @@ async def real_time_verify():
                 best_match = filename.split(".")[0]
 
     if best_match:  # Adjust threshold as necessary
-        return {"message": f"{best_match} verified successfully", "distance": distance}
+        return {"message": f"{best_match} verified successfully", "distance": distance, "threshold": threshold}
     else:
         return {"message": "Verification failed, no such person"}
 
