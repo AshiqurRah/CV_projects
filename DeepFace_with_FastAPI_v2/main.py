@@ -29,6 +29,7 @@ async def add_reference_image(name: str = Form(...), file: UploadFile=File(...))
 
 @app.post("/real_time_register")
 async def real_time_register(name: str = Form(...)):
+    # change paramter for VideoCapture, mostly it is 0 or 1. Depends on the number of camera devices connected to your comp
     cap = cv2.VideoCapture(1)
     if not cap.isOpened():
         return JSONResponse(content={"error": "Could not open webcam"}, status_code=500)
@@ -84,24 +85,24 @@ async def real_time_verify():
     except Exception as e:
         return JSONResponse(status_code=400, content={"error": str(e)})
     
-    # Load all stored embeddings and compare
+    # find best_match and best_distance for checking
     best_match = False
+    best_distance = False
 
     for filename in os.listdir("embeddings"):
         if filename.endswith(".pkl"):
             with open(os.path.join("embeddings", filename), 'rb') as file:
                 stored_embedding = pickle.load(file)
-            # stored_embedding = np.load(os.path.join("embeddings", filename))
-            # Use DeepFace's built-in verification to compare embeddings
 
             distance = find_cosine_distance(embedding, stored_embedding)
             threshold = find_threshold("Facenet512", 'cosine')
 
             if distance <= threshold:
                 best_match = filename.split(".")[0]
+                best_distance = distance
 
     if best_match:  # Adjust threshold as necessary
-        return {"message": f"{best_match} verified successfully", "distance": distance, "threshold": threshold}
+        return {"message": f"{best_match} verified successfully", "distance": best_distance, "threshold": threshold}
     else:
         return {"message": "Verification failed, no such person"}
 
