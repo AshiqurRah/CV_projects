@@ -1,0 +1,27 @@
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+}
+
+h1, h2 {
+    text-align: center;
+}
+
+form {
+    margin: 20px auto;
+    width: 300px;
+    text-align: center;
+}
+
+pre {
+    background-color: #f4f4f4;
+    padding: 20px;
+    border: 1px solid #ddd;
+    width: 50%;
+    margin: 20px auto;
+    white-space: pre-wrap;       /* CSS3 */
+    white-space: -moz-pre-wrap;  /* Firefox */
+    white-space: -pre-wrap;      /* Opera <7 */
+    white-space: -o-pre-wrap;    /* Opera 7 */
+    word-wrap: break-word;       /* IE */
+}

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Facial Recognition</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <h1>Facial Recognition System</h1>
+
+    <h2>Real-time Registration</h2>
+    <form id="realTimeRegisterForm">
+        <input type="text" name="name" id="realTimeRegisterName" placeholder="Enter your name" required>
+        <button type="submit">Register</button>
+    </form>
+    <pre id="realTimeRegisterResult"></pre>
+
+    <h2>Real-time Face Detection</h2>
+    <button id="realTimeDetectionButton">Start Detection</button>
+    <pre id="realTimeDetectionResult"></pre>
+
+    <script>
+        document.getElementById("realTimeRegisterForm").onsubmit = async function(event) {
+            event.preventDefault();
+            const formData = new FormData();
+            formData.append("name", document.getElementById("realTimeRegisterName").value);
+
+            const response = await fetch('/real_time_register/', {
+                method: "POST",
+                body: formData
+            });
+
+            const result = await response.json();
+            document.getElementById("realTimeRegisterResult").textContent = JSON.stringify(result, null, 2);
+        };
+
+        document.getElementById("realTimeDetectionButton").onclick = async function() {
+            const response = await fetch('/real_time_detection/');
+            const result = await response.json();
+            document.getElementById("realTimeDetectionResult").textContent = JSON.stringify(result, null, 2);
+        };
+    </script>
+</body>
+</html>
