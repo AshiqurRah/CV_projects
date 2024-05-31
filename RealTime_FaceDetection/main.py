@@ -46,7 +46,7 @@ async def real_time_register(name: str = Form(...)):
                 return JSONResponse(content={"error": "Failed to capture image"}, status_code=500)
 
             cv2.imshow("Register - press 'q' to capture", frame)
-            if cv2.waitKey(1) & 0xFF == ord('q'):
+            if cv2.waitKey(10) & 0xFF == ord('q'):
                 embedding = DeepFace.represent(
                     img_path = frame,
                     model_name="Facenet512"
