@@ -72,9 +72,6 @@ async def real_time_detection(level: int):
     cap = cv2.VideoCapture(1)
     # get preloaded embeddings
     embeddings, names = await get_embeddings()
-    
-    # number: #pax in screen
-    number = 0
 
     if level == 2:
        # Build model here to prevent re-downloaded of pretrained weights
@@ -89,6 +86,7 @@ async def real_time_detection(level: int):
                 break
             # convert frame to RGB
             rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            
             # detect faces and compute embeddings
             detections = DeepFace.extract_faces(frame, enforce_detection=False)
 
@@ -154,11 +152,8 @@ async def real_time_detection(level: int):
             cv2.imshow("Real-Time Face Detection", frame)
 
             if cv2.waitKey(1) & 0xFF == ord('q'):
-                if level == 3:
-                    if detections[0]["confidence"] == 0:
-                        number = 0
-                    else:
-                        number = len(detections)
+                # number: #pax in screen
+                number = len(detections) if level == 3 and detections[0]["confidence"] != 0 else 0
                 break
     finally:
         # Release the webcam
@@ -170,12 +165,6 @@ async def real_time_detection(level: int):
     if level == 3:
         return JSONResponse(content={"message": f"{number} pax in frame", "status": "stopped"})
     return JSONResponse(content={"status": "stopped"})
-
-async def highLevelDetection():
-    return
-
-# highest level -> Name of person
-# medium level -> analyse
 
 if __name__ == '__main__':
     import uvicorn
